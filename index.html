@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -25,6 +25,18 @@
         #rld:active {
             transform: translateY(2px);
         }
+
+        #serverIP {
+            font-size: 18px;
+            padding: 10px;
+            width: 250px;
+        }
+
+        #search {
+            font-size: 18px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -36,24 +48,37 @@
 
     <button id="rld">RELOAD</button>
 
-    <audio id="clickSound" src="click1.mp3"></audio>
+    <br><br>
+
+    <input
+        id="serverIP"
+        type="text"
+        placeholder="Enter Minecraft server IP"
+    >
+
+    <button id="search">SEARCH</button>
 
     <script>
         console.log("JavaScript started!");
 
         let rld = document.querySelector("#rld");
         let players = document.querySelector("#players");
-        let clickSound = document.querySelector("#clickSound");
+
+        let serverIP = document.querySelector("#serverIP");
+        let search = document.querySelector("#search");
+
+        let clickSound = new Audio("click1.mp3");
 
         function playClick() {
             clickSound.currentTime = 0;
             clickSound.play();
         }
 
-        function getPlayers() {
+        function getPlayers(ip) {
             players.textContent = "Checking...";
+            players.style.color = "#ffffff";
 
-            fetch("https://api.mcstatus.io/v2/status/java/donutsmp.net")
+            fetch("https://api.mcstatus.io/v2/status/java/" + ip)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
@@ -78,13 +103,33 @@
         }
 
         rld.addEventListener("click", function() {
-            console.log("BUTTON CLICKED!");
+            console.log("RELOAD CLICKED!");
 
             playClick();
-            getPlayers();
+
+            // Reload the current server
+            getPlayers(serverIP.value);
         });
 
-        getPlayers();
+        search.addEventListener("click", function() {
+            console.log("SEARCH CLICKED!");
+
+            playClick();
+
+            let ip = serverIP.value;
+
+            if (ip === "") {
+                players.textContent = "Enter a server IP!";
+                players.style.color = "#ff0000";
+                return;
+            }
+
+            getPlayers(ip);
+        });
+
+        // Initial server
+        serverIP.value = "donutsmp.net";
+        getPlayers("donutsmp.net");
     </script>
 
 </body>
