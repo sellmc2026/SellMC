@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -36,34 +36,18 @@
 
     <button id="rld">RELOAD</button>
 
+    <audio id="clickSound" src="click1.mp3"></audio>
+
     <script>
         console.log("JavaScript started!");
 
         let rld = document.querySelector("#rld");
         let players = document.querySelector("#players");
+        let clickSound = document.querySelector("#clickSound");
 
         function playClick() {
-            let audio = new AudioContext();
-
-            let oscillator = audio.createOscillator();
-            let volume = audio.createGain();
-
-            oscillator.type = "square";
-            oscillator.frequency.value = 500;
-
-            volume.gain.value = 0.08;
-
-            oscillator.connect(volume);
-            volume.connect(audio.destination);
-
-            oscillator.start();
-
-            volume.gain.exponentialRampToValueAtTime(
-                0.001,
-                audio.currentTime + 0.08
-            );
-
-            oscillator.stop(audio.currentTime + 0.08);
+            clickSound.currentTime = 0;
+            clickSound.play();
         }
 
         function getPlayers() {
