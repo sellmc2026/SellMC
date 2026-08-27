@@ -7,13 +7,16 @@
     <title>Minecraft Server</title>
 
     <style>
+
         body {
             margin: 0;
+            padding: 0;
             font-family: Arial, sans-serif;
         }
 
+
         /* =========================
-           SEARCH BOX
+           TOP SEARCH
            ========================= */
 
         #searchArea {
@@ -35,21 +38,28 @@
 
 
         /* =========================
-           SERVER INFORMATION
+           MAIN SERVER AREA
            ========================= */
 
-        #serverInfo {
+        #main {
             display: flex;
-            align-items: center;
 
-            width: 600px;
+            width: 1000px;
+
             margin: 40px auto 0 auto;
         }
 
 
         /* =========================
-           SERVER ICON
+           LEFT SIDE
            ========================= */
+
+        #serverSection {
+            width: 500px;
+
+            display: flex;
+            align-items: center;
+        }
 
         #serverIcon {
             width: 128px;
@@ -63,14 +73,12 @@
         }
 
 
-        /* =========================
-           SERVER NAME / MOTD
-           ========================= */
+        #serverDetails {
+            margin-left: 25px;
+        }
 
         #motd {
-            margin-left: 25px;
-
-            font-family: "Minecraft", monospace;
+            font-family: monospace;
 
             font-size: 26px;
             font-weight: bold;
@@ -83,13 +91,17 @@
             margin: 0;
         }
 
+        #players {
+            font-size: 18px;
+        }
+
 
         /* =========================
-           REFRESH BUTTON
+           REFRESH
            ========================= */
 
         #rld {
-            margin-top: 20px;
+            margin-top: 10px;
 
             background-color: #00ff00;
             color: #000000;
@@ -115,28 +127,101 @@
 
 
         /* =========================
-           PLAYER COUNT
+           RIGHT SIDE
            ========================= */
 
-        #players {
-            margin-top: 10px;
+        #playerSection {
+            width: 400px;
 
+            margin-left: 50px;
+        }
+
+
+        #playerHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+
+        #playerHeader h2 {
+            margin: 0;
+        }
+
+
+        #playerSearch {
+            width: 150px;
+            padding: 6px;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           PLAYER LIST
+           ========================= */
+
+        #playerList {
+            margin-top: 15px;
+        }
+
+
+        .player {
+            display: flex;
+            align-items: center;
+
+            height: 45px;
+
+            margin-bottom: 5px;
+        }
+
+
+        .playerHead {
+            width: 40px;
+            height: 40px;
+
+            image-rendering: pixelated;
+
+            margin-right: 10px;
+        }
+
+
+        .playerName {
             font-size: 18px;
         }
+
+
+        /* =========================
+           SEE MORE
+           ========================= */
+
+        #seeMore {
+            margin-top: 10px;
+
+            padding: 8px 15px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
+
     <!-- =========================
-         SEARCH
+         SERVER IP SEARCH
          ========================= -->
 
     <div id="searchArea">
 
         <input
-            type="text"
             id="serverIP"
+            type="text"
             placeholder="Minecraft server IP"
         >
 
@@ -147,36 +232,97 @@
     </div>
 
 
+
     <!-- =========================
-         SERVER INFORMATION
+         MAIN
          ========================= -->
 
-    <div id="serverInfo">
+    <div id="main">
 
-        <div>
-            <img
-                id="serverIcon"
-                src=""
-                alt="Server Icon"
-            >
 
-            <br>
+        <!-- =========================
+             SERVER
+             ========================= -->
 
-            <button id="rld">ʀᴇꜰʀᴇѕʜ</button>
+        <div id="serverSection">
+
+            <div>
+
+                <img
+                    id="serverIcon"
+                    src=""
+                    alt="Server Icon"
+                >
+
+                <br>
+
+                <button id="rld">
+                    ʀᴇꜰʀᴇѕʜ
+                </button>
+
+            </div>
+
+
+            <div id="serverDetails">
+
+                <div id="motd">
+
+                    <p id="motdLine1">
+                        Server Info
+                    </p>
+
+                    <p id="motdLine2">
+                    </p>
+
+                </div>
+
+
+                <p id="players">
+                    Checking...
+                </p>
+
+            </div>
+
         </div>
 
 
-        <div id="motd">
 
-            <p id="motdLine1">Server Info</p>
+        <!-- =========================
+             PLAYERS
+             ========================= -->
 
-            <p id="motdLine2"></p>
+        <div id="playerSection">
 
-            <p id="players">Checking...</p>
+            <div id="playerHeader">
+
+                <h2>
+                    Players
+                </h2>
+
+                <input
+                    id="playerSearch"
+                    type="text"
+                    placeholder="Search players"
+                >
+
+            </div>
+
+
+            <div id="playerList">
+            </div>
+
+
+            <button
+                id="seeMore"
+                style="display: none;"
+            >
+                See more
+            </button>
 
         </div>
 
     </div>
+
 
 
     <script>
@@ -188,26 +334,43 @@
         // ELEMENTS
         // =========================
 
-        let rld = document.querySelector("#rld");
+        let rld =
+            document.querySelector("#rld");
 
-        let players = document.querySelector("#players");
+        let players =
+            document.querySelector("#players");
 
-        let serverIP = document.querySelector("#serverIP");
+        let serverIP =
+            document.querySelector("#serverIP");
 
-        let checkServer = document.querySelector("#checkServer");
+        let checkServer =
+            document.querySelector("#checkServer");
 
-        let serverIcon = document.querySelector("#serverIcon");
+        let serverIcon =
+            document.querySelector("#serverIcon");
 
-        let motdLine1 = document.querySelector("#motdLine1");
+        let motdLine1 =
+            document.querySelector("#motdLine1");
 
-        let motdLine2 = document.querySelector("#motdLine2");
+        let motdLine2 =
+            document.querySelector("#motdLine2");
+
+        let playerList =
+            document.querySelector("#playerList");
+
+        let playerSearch =
+            document.querySelector("#playerSearch");
+
+        let seeMore =
+            document.querySelector("#seeMore");
 
 
         // =========================
         // SOUND
         // =========================
 
-        let clickSound = new Audio("click1.mp3");
+        let clickSound =
+            new Audio("click1.mp3");
 
 
         function playClick() {
@@ -220,20 +383,144 @@
 
 
         // =========================
+        // PLAYER DATA
+        // =========================
+
+        let allPlayers = [];
+
+        let showingAll = false;
+
+
+        // =========================
         // CLEAN MOTD
         // =========================
 
         function cleanMotd(text) {
 
-            // Remove Minecraft color codes
+            text =
+                text.replace(
+                    /§[0-9a-fk-or]/gi,
+                    ""
+                );
 
-            text = text.replace(/§[0-9a-fk-or]/gi, "");
-
-            // Remove extra formatting codes
-
-            text = text.replace(/&[0-9a-fk-or]/gi, "");
+            text =
+                text.replace(
+                    /&[0-9a-fk-or]/gi,
+                    ""
+                );
 
             return text;
+
+        }
+
+
+        // =========================
+        // DISPLAY PLAYERS
+        // =========================
+
+        function displayPlayers() {
+
+            playerList.innerHTML = "";
+
+
+            let search =
+                playerSearch.value
+                    .toLowerCase()
+                    .trim();
+
+
+            let filteredPlayers =
+                allPlayers.filter(function(player) {
+
+                    return player.name
+                        .toLowerCase()
+                        .includes(search);
+
+                });
+
+
+            let limit = showingAll
+                ? filteredPlayers.length
+                : 15;
+
+
+            let visiblePlayers =
+                filteredPlayers.slice(
+                    0,
+                    limit
+                );
+
+
+            visiblePlayers.forEach(
+                function(player) {
+
+                    let playerDiv =
+                        document.createElement("div");
+
+                    playerDiv.className =
+                        "player";
+
+
+                    let head =
+                        document.createElement("img");
+
+                    head.className =
+                        "playerHead";
+
+
+                    /*
+                     * MC head image
+                     *
+                     * Uses the player's UUID
+                     */
+
+                    head.src =
+                        "https://mc-heads.net/avatar/"
+                        + player.uuid
+                        + "/40";
+
+
+                    let name =
+                        document.createElement("span");
+
+                    name.className =
+                        "playerName";
+
+                    name.textContent =
+                        player.name;
+
+
+                    playerDiv.appendChild(head);
+
+                    playerDiv.appendChild(name);
+
+                    playerList.appendChild(
+                        playerDiv
+                    );
+
+                }
+            );
+
+
+            /*
+             * Show See More only if
+             * there are more than 15
+             */
+
+            if (
+                filteredPlayers.length > 15
+                && !showingAll
+            ) {
+
+                seeMore.style.display =
+                    "block";
+
+            } else {
+
+                seeMore.style.display =
+                    "none";
+
+            }
 
         }
 
@@ -244,9 +531,11 @@
 
         function getPlayers(ip) {
 
-            players.textContent = "Checking...";
+            players.textContent =
+                "Checking...";
 
-            players.style.color = "#000000";
+            players.style.color =
+                "#000000";
 
 
             fetch(
@@ -254,9 +543,13 @@
                 + encodeURIComponent(ip)
             )
 
-            .then(response => response.json())
+            .then(function(response) {
 
-            .then(data => {
+                return response.json();
+
+            })
+
+            .then(function(data) {
 
                 console.log(data);
 
@@ -267,20 +560,24 @@
 
                 if (data.online) {
 
+
                     players.textContent =
                         data.players.online
                         + " players online";
 
-                    players.style.color = "#00ff00";
+
+                    players.style.color =
+                        "#00ff00";
 
 
                     // =========================
-                    // SERVER ICON
+                    // ICON
                     // =========================
 
                     if (data.icon) {
 
-                        serverIcon.src = data.icon;
+                        serverIcon.src =
+                            data.icon;
 
                     }
 
@@ -289,31 +586,53 @@
                     // MOTD
                     // =========================
 
-                    if (data.motd && data.motd.clean) {
+                    if (
+                        data.motd
+                        && data.motd.clean
+                    ) {
 
-                        let motd = cleanMotd(data.motd.clean);
+                        let motd =
+                            cleanMotd(
+                                data.motd.clean
+                            );
 
 
-                        // Split MOTD into lines
-
-                        let lines = motd.split("\n");
+                        let lines =
+                            motd.split("\n");
 
 
                         motdLine1.textContent =
                             lines[0] || "";
+
 
                         motdLine2.textContent =
                             lines[1] || "";
 
                     }
 
-                    else {
 
-                        motdLine1.textContent = ip;
+                    // =========================
+                    // PLAYERS
+                    // =========================
 
-                        motdLine2.textContent = "";
+                    if (
+                        data.players
+                        && data.players.list
+                    ) {
+
+                        allPlayers =
+                            data.players.list;
+
+                    } else {
+
+                        allPlayers = [];
 
                     }
+
+
+                    showingAll = false;
+
+                    displayPlayers();
 
                 }
 
@@ -330,21 +649,35 @@
                     players.style.color =
                         "#ff0000";
 
-                    serverIcon.src = "";
+
+                    serverIcon.src =
+                        "";
+
 
                     motdLine1.textContent =
                         ip;
 
+
                     motdLine2.textContent =
                         "Server offline";
+
+
+                    allPlayers = [];
+
+                    displayPlayers();
 
                 }
 
             })
 
-            .catch(error => {
 
-                console.log("ERROR:", error);
+            .catch(function(error) {
+
+                console.log(
+                    "ERROR:",
+                    error
+                );
+
 
                 players.textContent =
                     "Could not check server";
@@ -358,7 +691,7 @@
 
 
         // =========================
-        // CHECK BUTTON
+        // CHECK SERVER
         // =========================
 
         checkServer.addEventListener(
@@ -392,7 +725,7 @@
 
 
         // =========================
-        // REFRESH BUTTON
+        // REFRESH
         // =========================
 
         rld.addEventListener(
@@ -408,9 +741,11 @@
 
                 if (ip === "") {
 
-                    ip = "donutsmp.net";
+                    ip =
+                        "donutsmp.net";
 
-                    serverIP.value = ip;
+                    serverIP.value =
+                        ip;
 
                 }
 
@@ -422,14 +757,16 @@
 
 
         // =========================
-        // PRESS ENTER
+        // ENTER KEY
         // =========================
 
         serverIP.addEventListener(
             "keydown",
             function(event) {
 
-                if (event.key === "Enter") {
+                if (
+                    event.key === "Enter"
+                ) {
 
                     event.preventDefault();
 
@@ -442,14 +779,47 @@
 
 
         // =========================
+        // PLAYER SEARCH
+        // =========================
+
+        playerSearch.addEventListener(
+            "input",
+            function() {
+
+                showingAll = false;
+
+                displayPlayers();
+
+            }
+        );
+
+
+        // =========================
+        // SEE MORE
+        // =========================
+
+        seeMore.addEventListener(
+            "click",
+            function() {
+
+                showingAll = true;
+
+                displayPlayers();
+
+            }
+        );
+
+
+        // =========================
         // DEFAULT SERVER
         // =========================
 
         serverIP.value =
-            "sellmc.minehut.gg";
+            "donutsmp.net";
+
 
         getPlayers(
-            "sellmc.minehut.gg"
+            "donutsmp.net"
         );
 
     </script>
