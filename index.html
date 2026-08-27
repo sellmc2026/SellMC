@@ -3,17 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Minecraft Server</title>
 
     <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* =========================
+           SEARCH BOX
+           ========================= */
+
+        #searchArea {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #serverIP {
+            width: 300px;
+            padding: 8px;
+            font-size: 18px;
+        }
+
+        #checkServer {
+            padding: 9px 18px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           SERVER INFORMATION
+           ========================= */
+
+        #serverInfo {
+            display: flex;
+            align-items: center;
+
+            width: 600px;
+            margin: 40px auto 0 auto;
+        }
+
+
+        /* =========================
+           SERVER ICON
+           ========================= */
+
+        #serverIcon {
+            width: 128px;
+            height: 128px;
+
+            image-rendering: pixelated;
+
+            border-radius: 8px;
+
+            background-color: #222222;
+        }
+
+
+        /* =========================
+           SERVER NAME / MOTD
+           ========================= */
+
+        #motd {
+            margin-left: 25px;
+
+            font-family: "Minecraft", monospace;
+
+            font-size: 26px;
+            font-weight: bold;
+
+            line-height: 1.2;
+        }
+
+        #motdLine1,
+        #motdLine2 {
+            margin: 0;
+        }
+
+
+        /* =========================
+           REFRESH BUTTON
+           ========================= */
+
         #rld {
+            margin-top: 20px;
+
             background-color: #00ff00;
             color: #000000;
-            font-size: 20px;
+
+            font-size: 18px;
             font-weight: bold;
-            padding: 10px 20px;
+
+            padding: 8px 18px;
+
             border: 2px solid #008800;
-            border-radius: 8px;
+            border-radius: 6px;
+
             cursor: pointer;
         }
 
@@ -25,147 +113,345 @@
             transform: translateY(2px);
         }
 
-        #serverIP {
-            font-size: 18px;
-            padding: 8px;
-            width: 250px;
-        }
 
-        #checkServer {
+        /* =========================
+           PLAYER COUNT
+           ========================= */
+
+        #players {
+            margin-top: 10px;
+
             font-size: 18px;
-            padding: 8px 15px;
-            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
 
-    <h1 id="serverName">Server Info</h1>
+    <!-- =========================
+         SEARCH
+         ========================= -->
 
-    <p id="players">Checking...</p>
+    <div id="searchArea">
 
-    <button id="rld">RELOAD</button>
+        <input
+            type="text"
+            id="serverIP"
+            placeholder="Minecraft server IP"
+        >
 
-    <br><br>
+        <button id="checkServer">
+            CHECK
+        </button>
 
-    <input
-        type="text"
-        id="serverIP"
-        placeholder="Minecraft server IP"
-    >
+    </div>
 
-    <button id="checkServer">CHECK</button>
+
+    <!-- =========================
+         SERVER INFORMATION
+         ========================= -->
+
+    <div id="serverInfo">
+
+        <div>
+            <img
+                id="serverIcon"
+                src=""
+                alt="Server Icon"
+            >
+
+            <br>
+
+            <button id="rld">ʀᴇꜰʀᴇѕʜ</button>
+        </div>
+
+
+        <div id="motd">
+
+            <p id="motdLine1">Server Info</p>
+
+            <p id="motdLine2"></p>
+
+            <p id="players">Checking...</p>
+
+        </div>
+
+    </div>
+
 
     <script>
+
         console.log("JavaScript started!");
 
+
+        // =========================
+        // ELEMENTS
+        // =========================
+
         let rld = document.querySelector("#rld");
+
         let players = document.querySelector("#players");
+
         let serverIP = document.querySelector("#serverIP");
+
         let checkServer = document.querySelector("#checkServer");
-        let serverName = document.querySelector("#serverName");
+
+        let serverIcon = document.querySelector("#serverIcon");
+
+        let motdLine1 = document.querySelector("#motdLine1");
+
+        let motdLine2 = document.querySelector("#motdLine2");
+
+
+        // =========================
+        // SOUND
+        // =========================
 
         let clickSound = new Audio("click1.mp3");
 
+
         function playClick() {
+
             clickSound.currentTime = 0;
+
             clickSound.play();
+
         }
 
-        function removeIPEnding(ip) {
-            return ip.replace(
-                /\.(com|net|org|gg|io|me|xyz|co|us|eu|online|fun|lol|club|live|games|site)$/i,
-                ""
-            );
+
+        // =========================
+        // CLEAN MOTD
+        // =========================
+
+        function cleanMotd(text) {
+
+            // Remove Minecraft color codes
+
+            text = text.replace(/§[0-9a-fk-or]/gi, "");
+
+            // Remove extra formatting codes
+
+            text = text.replace(/&[0-9a-fk-or]/gi, "");
+
+            return text;
+
         }
+
+
+        // =========================
+        // GET SERVER
+        // =========================
 
         function getPlayers(ip) {
+
             players.textContent = "Checking...";
+
             players.style.color = "#000000";
 
-            fetch("https://api.mcstatus.io/v2/status/java/" + ip)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
 
-                    if (data.online) {
+            fetch(
+                "https://api.mcstatus.io/v2/status/java/"
+                + encodeURIComponent(ip)
+            )
 
-                        players.textContent =
-                            data.players.online + " players online";
+            .then(response => response.json())
 
-                        players.style.color = "#00ff00";
+            .then(data => {
 
-                        // Get the server's MOTD/name
-                        if (data.motd && data.motd.clean) {
-                            serverName.textContent = data.motd.clean;
-                        } else {
-                            serverName.textContent = removeIPEnding(ip);
-                        }
+                console.log(data);
 
-                    } else {
 
-                        players.textContent = "Server offline";
-                        players.style.color = "#ff0000";
+                // =========================
+                // ONLINE
+                // =========================
 
-                        serverName.textContent = removeIPEnding(ip);
+                if (data.online) {
+
+                    players.textContent =
+                        data.players.online
+                        + " players online";
+
+                    players.style.color = "#00ff00";
+
+
+                    // =========================
+                    // SERVER ICON
+                    // =========================
+
+                    if (data.icon) {
+
+                        serverIcon.src = data.icon;
+
                     }
-                })
-                .catch(error => {
-                    console.log("ERROR:", error);
 
-                    players.textContent = "Could not check server";
-                    players.style.color = "#ff0000";
 
-                    serverName.textContent = removeIPEnding(ip);
-                });
-        }
+                    // =========================
+                    // MOTD
+                    // =========================
 
-        checkServer.addEventListener("click", function() {
-            playClick();
+                    if (data.motd && data.motd.clean) {
 
-            let ip = serverIP.value.trim();
+                        let motd = cleanMotd(data.motd.clean);
 
-            if (ip === "") {
-                players.textContent = "Enter a server IP!";
-                players.style.color = "#ff0000";
-                return;
-            }
 
-            getPlayers(ip);
-        });
+                        // Split MOTD into lines
 
-        rld.addEventListener("click", function() {
-            playClick();
+                        let lines = motd.split("\n");
 
-            let ip = serverIP.value.trim();
 
-            if (ip === "") {
-                ip = "donutsmp.net";
-            }
+                        motdLine1.textContent =
+                            lines[0] || "";
 
-            getPlayers(ip);
-        });
+                        motdLine2.textContent =
+                            lines[1] || "";
 
-        serverIP.addEventListener("keydown", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
+                    }
 
-                let ip = serverIP.value.trim();
+                    else {
 
-                if (ip === "") {
-                    players.textContent = "Enter a server IP!";
-                    players.style.color = "#ff0000";
-                    return;
+                        motdLine1.textContent = ip;
+
+                        motdLine2.textContent = "";
+
+                    }
+
                 }
 
+
+                // =========================
+                // OFFLINE
+                // =========================
+
+                else {
+
+                    players.textContent =
+                        "Server offline";
+
+                    players.style.color =
+                        "#ff0000";
+
+                    serverIcon.src = "";
+
+                    motdLine1.textContent =
+                        ip;
+
+                    motdLine2.textContent =
+                        "Server offline";
+
+                }
+
+            })
+
+            .catch(error => {
+
+                console.log("ERROR:", error);
+
+                players.textContent =
+                    "Could not check server";
+
+                players.style.color =
+                    "#ff0000";
+
+            });
+
+        }
+
+
+        // =========================
+        // CHECK BUTTON
+        // =========================
+
+        checkServer.addEventListener(
+            "click",
+            function() {
+
+                playClick();
+
+
+                let ip =
+                    serverIP.value.trim();
+
+
+                if (ip === "") {
+
+                    players.textContent =
+                        "Enter a server IP!";
+
+                    players.style.color =
+                        "#ff0000";
+
+                    return;
+
+                }
+
+
                 getPlayers(ip);
+
             }
-        });
+        );
 
-        serverIP.value = "donutsmp.net";
 
-        getPlayers("donutsmp.net");
+        // =========================
+        // REFRESH BUTTON
+        // =========================
+
+        rld.addEventListener(
+            "click",
+            function() {
+
+                playClick();
+
+
+                let ip =
+                    serverIP.value.trim();
+
+
+                if (ip === "") {
+
+                    ip = "donutsmp.net";
+
+                    serverIP.value = ip;
+
+                }
+
+
+                getPlayers(ip);
+
+            }
+        );
+
+
+        // =========================
+        // PRESS ENTER
+        // =========================
+
+        serverIP.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    checkServer.click();
+
+                }
+
+            }
+        );
+
+
+        // =========================
+        // DEFAULT SERVER
+        // =========================
+
+        serverIP.value =
+            "donutsmp.net";
+
+        getPlayers(
+            "donutsmp.net"
+        );
+
     </script>
 
 </body>
