@@ -6,6 +6,10 @@
     <title>Minecraft Server</title>
 
     <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
         #rld {
             background-color: #00ff00;
             color: #000000;
@@ -19,6 +23,10 @@
 
         #rld:hover {
             background-color: #00cc00;
+        }
+
+        #rld:active {
+            transform: translateY(2px);
         }
 
         #serverIP {
@@ -90,9 +98,14 @@
                             data.players.online + " players online";
 
                         players.style.color = "#00ff00";
+                        players.style.textShadow =
+                            "1px 1px 1px #000000";
                     } else {
                         players.textContent = "Server offline";
+
                         players.style.color = "#ff0000";
+                        players.style.textShadow =
+                            "1px 1px 1px #000000";
                     }
                 })
                 .catch(error => {
@@ -104,6 +117,8 @@
         }
 
         search.addEventListener("click", function() {
+            console.log("SEARCH CLICKED!");
+
             playClick();
 
             let ip = serverIP.value.trim();
@@ -118,6 +133,8 @@
         });
 
         rld.addEventListener("click", function() {
+            console.log("RELOAD CLICKED!");
+
             playClick();
 
             let ip = serverIP.value.trim();
@@ -132,6 +149,7 @@
         });
 
         serverIP.value = "donutsmp.net";
+
         getPlayers("donutsmp.net");
     </script>
 
