@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Server</title>
+
+    <style>
+        #rld {
+            background-color: #00ff00;
+            color: #000000;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #008800;
+            border-radius: 8px;
+            cursor: pointer;
+            text-shadow: 1px 1px 1px #ffffff;
+        }
+
+        #rld:hover {
+            background-color: #00cc00;
+        }
+
+        #rld:active {
+            transform: translateY(2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Server Info</h1>
+
+    <p id="players">Checking...</p>
+
+    <button id="rld">RELOAD</button>
+
+    <script>
+        console.log("JavaScript started!");
+
+        let rld = document.querySelector("#rld");
+        let players = document.querySelector("#players");
+
+        function playClick() {
+            let audio = new AudioContext();
+
+            let oscillator = audio.createOscillator();
+            let volume = audio.createGain();
+
+            oscillator.type = "square";
+            oscillator.frequency.value = 500;
+
+            volume.gain.value = 0.08;
+
+            oscillator.connect(volume);
+            volume.connect(audio.destination);
+
+            oscillator.start();
+
+            volume.gain.exponentialRampToValueAtTime(
+                0.001,
+                audio.currentTime + 0.08
+            );
+
+            oscillator.stop(audio.currentTime + 0.08);
+        }
+
+        function getPlayers() {
+            players.textContent = "Checking...";
+
+            fetch("https://api.mcstatus.io/v2/status/java/donutsmp.net")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+
+                    if (data.online) {
+                        players.textContent =
+                            data.players.online + " players online";
+
+                        players.style.color = "#00ff00";
+                    } else {
+                        players.textContent = "Server offline";
+
+                        players.style.color = "#ff0000";
+                    }
+                })
+                .catch(error => {
+                    console.log("ERROR:", error);
+
+                    players.textContent = "Could not check server";
+                    players.style.color = "#ff0000";
+                });
+        }
+
+        rld.addEventListener("click", function() {
+            console.log("BUTTON CLICKED!");
+
+            playClick();
+            getPlayers();
+        });
+
+        getPlayers();
+    </script>
+
+</body>
+</html>
