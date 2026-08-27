@@ -15,27 +15,29 @@
             border: 2px solid #008800;
             border-radius: 8px;
             cursor: pointer;
-            text-shadow: 1px 1px 1px #ffffff;
         }
 
         #rld:hover {
             background-color: #00cc00;
         }
 
-        #rld:active {
-            transform: translateY(2px);
-        }
-
         #serverIP {
+            width: 300px;
+            height: 40px;
+            box-sizing: border-box;
+            padding: 8px;
             font-size: 18px;
-            padding: 10px;
-            width: 250px;
+            border: 2px solid #888888;
+            border-radius: 6px;
         }
 
         #search {
+            height: 40px;
+            padding: 0 20px;
             font-size: 18px;
-            padding: 10px 20px;
+            font-weight: bold;
             cursor: pointer;
+            margin-left: 5px;
         }
     </style>
 </head>
@@ -76,7 +78,7 @@
 
         function getPlayers(ip) {
             players.textContent = "Checking...";
-            players.style.color = "#ffffff";
+            players.style.color = "#000000";
 
             fetch("https://api.mcstatus.io/v2/status/java/" + ip)
                 .then(response => response.json())
@@ -90,7 +92,6 @@
                         players.style.color = "#00ff00";
                     } else {
                         players.textContent = "Server offline";
-
                         players.style.color = "#ff0000";
                     }
                 })
@@ -102,21 +103,10 @@
                 });
         }
 
-        rld.addEventListener("click", function() {
-            console.log("RELOAD CLICKED!");
-
-            playClick();
-
-            // Reload the current server
-            getPlayers(serverIP.value);
-        });
-
         search.addEventListener("click", function() {
-            console.log("SEARCH CLICKED!");
-
             playClick();
 
-            let ip = serverIP.value;
+            let ip = serverIP.value.trim();
 
             if (ip === "") {
                 players.textContent = "Enter a server IP!";
@@ -127,7 +117,20 @@
             getPlayers(ip);
         });
 
-        // Initial server
+        rld.addEventListener("click", function() {
+            playClick();
+
+            let ip = serverIP.value.trim();
+
+            if (ip === "") {
+                players.textContent = "Enter a server IP!";
+                players.style.color = "#ff0000";
+                return;
+            }
+
+            getPlayers(ip);
+        });
+
         serverIP.value = "donutsmp.net";
         getPlayers("donutsmp.net");
     </script>
