@@ -41,7 +41,7 @@
 
 <body>
 
-    <h1>Server Info</h1>
+    <h1 id="serverName">Server Info</h1>
 
     <p id="players">Checking...</p>
 
@@ -49,7 +49,6 @@
 
     <br><br>
 
-    <!-- Plain box for entering an IP -->
     <input
         type="text"
         id="serverIP"
@@ -65,12 +64,20 @@
         let players = document.querySelector("#players");
         let serverIP = document.querySelector("#serverIP");
         let checkServer = document.querySelector("#checkServer");
+        let serverName = document.querySelector("#serverName");
 
         let clickSound = new Audio("click1.mp3");
 
         function playClick() {
             clickSound.currentTime = 0;
             clickSound.play();
+        }
+
+        function removeIPEnding(ip) {
+            return ip.replace(
+                /\.(com|net|org|gg|io|me|xyz|co|us|eu|online|fun|lol|club|live|games|site)$/i,
+                ""
+            );
         }
 
         function getPlayers(ip) {
@@ -83,14 +90,25 @@
                     console.log(data);
 
                     if (data.online) {
+
                         players.textContent =
                             data.players.online + " players online";
 
                         players.style.color = "#00ff00";
-                    } else {
-                        players.textContent = "Server offline";
 
+                        // Get the server's MOTD/name
+                        if (data.motd && data.motd.clean) {
+                            serverName.textContent = data.motd.clean;
+                        } else {
+                            serverName.textContent = removeIPEnding(ip);
+                        }
+
+                    } else {
+
+                        players.textContent = "Server offline";
                         players.style.color = "#ff0000";
+
+                        serverName.textContent = removeIPEnding(ip);
                     }
                 })
                 .catch(error => {
@@ -98,6 +116,8 @@
 
                     players.textContent = "Could not check server";
                     players.style.color = "#ff0000";
+
+                    serverName.textContent = removeIPEnding(ip);
                 });
         }
 
@@ -127,12 +147,25 @@
             getPlayers(ip);
         });
 
+        serverIP.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+
+                let ip = serverIP.value.trim();
+
+                if (ip === "") {
+                    players.textContent = "Enter a server IP!";
+                    players.style.color = "#ff0000";
+                    return;
+                }
+
+                getPlayers(ip);
+            }
+        });
+
         serverIP.value = "donutsmp.net";
 
         getPlayers("donutsmp.net");
-
-       
-        });
     </script>
 
 </body>
