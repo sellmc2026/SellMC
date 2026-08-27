@@ -6,10 +6,6 @@
     <title>Minecraft Server</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
         #rld {
             background-color: #00ff00;
             color: #000000;
@@ -30,22 +26,15 @@
         }
 
         #serverIP {
-            width: 300px;
-            height: 40px;
-            box-sizing: border-box;
-            padding: 8px;
             font-size: 18px;
-            border: 2px solid #888888;
-            border-radius: 6px;
+            padding: 8px;
+            width: 250px;
         }
 
-        #search {
-            height: 40px;
-            padding: 0 20px;
+        #checkServer {
             font-size: 18px;
-            font-weight: bold;
+            padding: 8px 15px;
             cursor: pointer;
-            margin-left: 5px;
         }
     </style>
 </head>
@@ -60,22 +49,22 @@
 
     <br><br>
 
+    <!-- Plain box for entering an IP -->
     <input
-        id="serverIP"
         type="text"
-        placeholder="Enter Minecraft server IP"
+        id="serverIP"
+        placeholder="Minecraft server IP"
     >
 
-    <button id="search">SEARCH</button>
+    <button id="checkServer">CHECK</button>
 
     <script>
         console.log("JavaScript started!");
 
         let rld = document.querySelector("#rld");
         let players = document.querySelector("#players");
-
         let serverIP = document.querySelector("#serverIP");
-        let search = document.querySelector("#search");
+        let checkServer = document.querySelector("#checkServer");
 
         let clickSound = new Audio("click1.mp3");
 
@@ -98,14 +87,10 @@
                             data.players.online + " players online";
 
                         players.style.color = "#00ff00";
-                        players.style.textShadow =
-                            "1px 1px 1px #000000";
                     } else {
                         players.textContent = "Server offline";
 
                         players.style.color = "#ff0000";
-                        players.style.textShadow =
-                            "1px 1px 1px #000000";
                     }
                 })
                 .catch(error => {
@@ -116,9 +101,7 @@
                 });
         }
 
-        search.addEventListener("click", function() {
-            console.log("SEARCH CLICKED!");
-
+        checkServer.addEventListener("click", function() {
             playClick();
 
             let ip = serverIP.value.trim();
@@ -133,16 +116,12 @@
         });
 
         rld.addEventListener("click", function() {
-            console.log("RELOAD CLICKED!");
-
             playClick();
 
             let ip = serverIP.value.trim();
 
             if (ip === "") {
-                players.textContent = "Enter a server IP!";
-                players.style.color = "#ff0000";
-                return;
+                ip = "donutsmp.net";
             }
 
             getPlayers(ip);
